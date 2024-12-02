@@ -1,0 +1,53 @@
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+
+// Game settings
+let kidX = 300, kidY = 200, score = 0, candyX = 100, candyY = 100;
+const kidSize = 50, candySize = 30, speed = 5;
+
+// Game Loop
+function gameLoop() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawKid(kidX, kidY);
+    drawCandy(candyX, candyY);
+    checkCollision();
+    displayScore();
+    requestAnimationFrame(gameLoop);
+}
+
+function drawKid(x, y) {
+    ctx.fillStyle = 'yellow';
+    ctx.fillRect(x, y, kidSize, kidSize);
+}
+
+function drawCandy(x, y) {
+    ctx.fillStyle = 'red';
+    ctx.beginPath();
+    ctx.arc(x + candySize / 2, y + candySize / 2, candySize / 2, 0, Math.PI * 2);
+    ctx.fill();
+}
+
+function checkCollision() {
+    if (kidX < candyX + candySize && kidX + kidSize > candyX && kidY < candyY + candySize && kidY + kidSize > candyY) {
+        score++;
+        candyX = Math.random() * (canvas.width - candySize);
+        candyY = Math.random() * (canvas.height - candySize);
+    }
+}
+
+function displayScore() {
+    ctx.font = '20px Arial';
+    ctx.fillStyle = 'white';
+    ctx.fillText('Score: ' + score, 10, 30);
+}
+
+// Handle player movement
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'ArrowLeft' && kidX > 0) kidX -= speed;
+    if (event.key === 'ArrowRight' && kidX < canvas.width - kidSize) kidX += speed;
+    if (event.key === 'ArrowUp' && kidY > 0) kidY -= speed;
+    if (event.key === 'ArrowDown' && kidY < canvas.height - kidSize) kidY += speed;
+});
+
+// Start the game
+gameLoop();
